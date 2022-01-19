@@ -1,0 +1,22 @@
+input {
+  file {
+    path => "/home/ubuntu/logstash-input-dir/*.csv"
+    start_position => "beginning"
+    sincedb_path => "/dev/null"
+  }
+}
+filter {
+  csv {
+    columns => [ "firstname", "lastname", "address", "gender", "percentage" ]
+    skip_header => true
+  }
+  mutate {
+    remove_field => [ "message", "path", "host", '@timestamp', '@version' ]
+  }
+}
+output {
+  elasticsearch {
+    hosts => ["localhost:9200"]
+    index => "csv"
+  }
+}
